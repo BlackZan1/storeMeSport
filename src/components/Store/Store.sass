@@ -1,0 +1,28 @@
+.store-item 
+  overflow: hidden
+  width: inherit
+
+  & > div
+    animation: fadeIn .6s ease
+    border-radius: 10px
+
+  .ant-card
+    height: 435px
+    border: none
+
+    .ant-card-meta-title
+      font-size: 18px;
+
+    .ant-card-meta-description
+      overflow-y: auto
+
+    .ant-card-meta-avatar
+      font-size: 22px;
+
+      &::after
+        content: ''
+        background: salmon
+        height: 2px 
+        width: 100%
+        display: block
+        margin-top: 10px
