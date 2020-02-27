@@ -34,8 +34,8 @@ const productReducer = (state = initialState, action: ProductActionType) => {
     }
 }
 
-const setProductDataAction = (data: iDataItem): ProductActionType => ({type: ADD_DATA, data});
-const toggleIsFetching = (data: boolean): ProductActionType => ({type: TOGGLE_FETCHING, data});
+const setProductDataAction = (data: iDataItem): ProductActionType => ({ type: ADD_DATA, data });
+const toggleIsFetching = (data: boolean): ProductActionType => ({ type: TOGGLE_FETCHING, data });
 
 export const getProductDataAction = (id: number | string) => async (dispatch: any) => {
     dispatch(toggleIsFetching(true));

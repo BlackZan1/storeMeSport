@@ -15,24 +15,24 @@ const Header: React.FC<HeaderProps> = () => {
             </div>
 
             <nav className='header-menu'>
-                <NavLink className='header-menu-item' to={`/store/products`}>
-                    <Icon type="right-circle" />
+                <NavLink className='header-menu-item' to={`/store/products`} activeClassName='selected'>
+                    <Icon style={{fontSize: 22}} type="exclamation-circle" theme={'twoTone'} twoToneColor="#52c41a" />
                     <span className="nav-text">New</span>
                 </NavLink>
 
-                <NavLink to={`/store/men`}>
-                    <Icon type="right-circle" />
+                <NavLink to={`/store/men`} activeClassName='selected'>
+                    <Icon style={{fontSize: 22}} type="right-circle" theme={'twoTone'} />
                     <span className="nav-text">Men</span>
                 </NavLink>
 
-                <NavLink to={`/store/women`}>
-                    <Icon type="right-circle" />
+                <NavLink to={`/store/women`} activeClassName='selected'>
+                    <Icon style={{fontSize: 22}} type="right-circle" theme={'twoTone'} twoToneColor="#eb2f96" />
                     <span className="nav-text">Women</span>
                 </NavLink>
 
-                <NavLink to={`/store/all`}>
-                    <Icon type="right-circle" />
-                    <span className="nav-text">All</span>
+                <NavLink to={`/store/all`} activeClassName='selected'>
+                    <Icon style={{fontSize: 22}} type="right-circle" theme={'twoTone'} twoToneColor="#a9a9a9"/>
+                    <span className="nav-text">For All</span>
                 </NavLink>
             </nav>
         </Layout.Sider>

@@ -4,6 +4,8 @@ import './Search.sass';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { SearchByNameAction } from '../../redux/store-reducer';
+import { Avatar, Icon } from 'antd';
+import { NavLink } from 'react-router-dom';
 
 interface SearchProps {
     SearchByNameAction: (name: string) => void
@@ -11,6 +13,7 @@ interface SearchProps {
 
 const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction }) => {
     let [value, setValue] = useState<string>('');
+    let isAuth = false;
 
     const onChangeHandle = (ev: React.ChangeEvent<HTMLInputElement>) => {
         let v: string = ev.target.value;
@@ -22,7 +25,7 @@ const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction }) => {
         if(value) SearchByNameAction(value);
     }
 
-    return (
+    return <div className='store-header'>
         <Search
             placeholder={'Search in SportMe & Store'}
             onChange={onChangeHandle}
@@ -30,7 +33,18 @@ const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction }) => {
             className='search-input'
             value={value}
         />
-    )
+        
+        {
+            isAuth ?
+            <Avatar size="large" icon="user" className='user-avatar' />
+            :
+            <div className='auth-nav'> 
+                <NavLink to='/signUp'>Sign up <Icon type="user-add" /></NavLink>
+                <NavLink to='/login'>Login <Icon type="user" /></NavLink>
+            </div>
+        }
+        
+    </div>
 }
 
 let ComposedComponent = compose(

@@ -1,9 +1,15 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { createStore, combineReducers, applyMiddleware, Action } from 'redux';
+import thunk, { ThunkAction } from 'redux-thunk';
 import storeReducer, { iStoreState } from './store-reducer';
 import productReducer, { iProductState } from './product-reducer';
 import cartReducer, { iCartState } from './cart-reducer';
-import { reducer, FormReducer } from 'redux-form';
+import { FormReducer, reducer } from 'redux-form';
+import userReducer, { iUserState } from './user-reducer';
+
+export interface ThunkDispatch<S, E, A extends Action> {
+    <T extends A>(action: T): T;
+    <R>(asyncAction: ThunkAction<R, S, E, A>): R;
+}
 
 export interface iDataItem {
     id: string | number
@@ -23,13 +29,15 @@ export interface iState {
     dataProduct: iProductState
     dataCart: iCartState
     form: FormReducer
+    user: iUserState
 }
 
 const rootReducer = combineReducers({
     store: storeReducer,
     dataProduct: productReducer,
     dataCart: cartReducer,
-    form: reducer
+    form: reducer,
+    user: userReducer
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

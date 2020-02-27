@@ -1,5 +1,6 @@
 import { ActionType } from './store';
-import { getUserDataById } from '../api/api';
+import { getUserDataById, signUp, login } from '../api/api';
+import { stopSubmit, SubmissionError } from 'redux-form';
 
 const ADD_DATA = 'user/ADD_DATA', TOGGLE_FETCHING = 'user/TOGGLE_FETCHING', SET_TOKEN = 'SET_TOKEN', TOGGLE_AUTH = 'TOGGLE_AUTH';
 
@@ -30,7 +31,7 @@ let intialState: iUserState = {
     },
     token: '',
     isAuth: false,
-    isFetching: true
+    isFetching: false
 }
 
 const userReducer = (state = intialState, action: UserActionType): iUserState => {
@@ -69,20 +70,58 @@ const toggleIsAuth = (isAuth: boolean): UserActionType => ({ type: TOGGLE_AUTH, 
 const setTokenAction = (token: string): UserActionType => ({ type: SET_TOKEN, token });
 
 export const getUserDataAction = (token: string, userId: string | number) => async (dispatch: any) => {
+    dispatch(toggleIsFetching(false));
     dispatch(toggleIsFetching(true));    
 
     if(token && userId) {
         dispatch(localStorage.setItem('storeMe&', JSON.stringify({ userId, token })));
         dispatch(setTokenAction(token));
-        dispatch(toggleIsFetching(false));
     
         let res: iUser = await getUserDataById(userId);
-
+        
+        dispatch(toggleIsFetching(false));
         dispatch(setUserDataAction(res));
     }
 
-    dispatch(toggleIsAuth(false));
+    // dispatch(toggleIsAuth(false));
     dispatch(toggleIsFetching(false));
+}
+
+export const loginUserAction = (email: string, password: string) => async (dispatch: any) => {
+    dispatch(toggleIsFetching(false));
+    dispatch(toggleIsFetching(true));
+
+    if(!!email && !!password) {
+        dispatch(stopSubmit('signUp', {email: 'Enter your email'})); // Good idea to me
+        dispatch(stopSubmit('signUp', {email: 'Enter your password'})); // Good idea to me
+    }
+    
+    let res = await login(email, password);
+
+    if(res.error) {
+        console.log(res.message)
+    }
+    else {
+        console.log(res)
+
+        dispatch(toggleIsAuth(true));
+        dispatch(toggleIsFetching(false));   
+    }
+}
+
+export const registerUserAction = (email: string, name: string, password: string) => async (dispatch: any) => {
+    dispatch(toggleIsFetching(false));
+    dispatch(toggleIsFetching(true));
+
+    let res: any = await signUp(email, name, password);
+
+    if(res.error) {
+        dispatch(stopSubmit('signUp', {email: res.message})); // Good idea to me
+        dispatch(toggleIsFetching(false)); 
+    }
+    else {
+        dispatch(toggleIsFetching(false));
+    }
 }
 
 export default userReducer;

@@ -59,3 +59,7 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+a.selected {
+  color: #40a9ff;
+}
