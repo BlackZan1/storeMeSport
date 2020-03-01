@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { reduxForm, Field, InjectedFormProps } from 'redux-form';
 import { Button, Icon, Checkbox } from 'antd';
 import { NavLink } from 'react-router-dom';
-import './SignUp.sass';
 import { RenderInputForm } from '../../../assets/InputForm';
 import AuthLayout from '../components/AuthLayout';
+import './SignUp.sass';
 
 interface SignUpProps {
     isFetching: boolean
@@ -17,8 +17,10 @@ const SignUp: React.FC<SignUpProps & InjectedFormProps<{}, SignUpProps>> = ({ ha
         setChecked(!checked);
     }
 
+    console.log(handleSubmit)
+
     return (      
-        <AuthLayout height={'740'} bigTitle={'Create account'} handleSubmit={handleSubmit}>
+        <AuthLayout key={'2'} height={'740'} bigTitle={'Create account'} handleSubmit={handleSubmit}>
             <Field 
                 placeholder={'Email address'} 
                 label={'Email'} 
@@ -85,7 +87,7 @@ interface ValidateProps {
     checkPassword?: string
 }
 
-const validate = (values: ValidateProps)  => {
+const validate = (values: ValidateProps): ValidateProps  => {
     const errors: ValidateProps = {}
     const { email, name, password, checkPassword } = values;
 

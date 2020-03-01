@@ -11,6 +11,11 @@ interface LoginContainerProps {
     loginUserAction: (email: string, password: string) => Promise<void>
 }
 
+export interface iLoginValues {
+    email: string
+    password: string
+}
+
 class LoginContainer extends React.Component<LoginContainerProps> {
     constructor(props: LoginContainerProps) {
         super(props);
@@ -18,16 +23,21 @@ class LoginContainer extends React.Component<LoginContainerProps> {
         this.onSubmitHandler = this.onSubmitHandler.bind(this);
     }
 
-    onSubmitHandler(values: any) {
+    private onSubmitHandler(values: iLoginValues) {
+        let { email, password } = values;
+
         console.log(values)
+
+        this.props.loginUserAction(email, password);
     }
 
     render() {
-        const {isAuth, isFetching} = this.props;
+        const { isAuth, isFetching } = this.props;
 
         return <>
             {
-                isAuth ? <Redirect to='/store' />
+                isAuth ? 
+                <Redirect to='/store' />
                 :
                 <Login isFetching={isFetching} onSubmit={this.onSubmitHandler} />
             }

@@ -24,24 +24,26 @@ interface InputFormProps {
     className: string
     password?: boolean
     input: iInput
+    id?: string
 }
 
 interface iArguments {
     className: string
     placeholder: string
     type: string
+    id?: string
 }
 
-export const RenderInputForm: React.FC<InputFormProps> = ({meta: {touched, error, warning}, password, ...props}) => {
-    const { className, placeholder, type, label, input } = props;
+export const RenderInputForm: React.FC<InputFormProps> = React.memo(({meta: {touched, error, warning}, password, ...props}) => {
+    const { className, placeholder, type, label, input, id } = props;
+    const validationError = touched && error;
     const inputArguments: iArguments = {
         className,
         placeholder,
         type,
+        id,
         ...input
     }
-
-    const validationError = touched && error
 
     return <>
         <label className='input-label'>{ label }</label>
@@ -66,4 +68,4 @@ export const RenderInputForm: React.FC<InputFormProps> = ({meta: {touched, error
             }
         </Form.Item>
     </>
-}
+})

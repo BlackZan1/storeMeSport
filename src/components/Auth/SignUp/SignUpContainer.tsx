@@ -11,7 +11,7 @@ interface SignUpContainerProps {
     registerUserAction: (email: string, name: string, password: string) => Promise<void>
 }
 
-interface iSignUpState {
+interface iSignUpValues {
     email: string
     password: string
     name: string
@@ -24,16 +24,12 @@ class SignUpContainer extends React.Component<SignUpContainerProps> {
         this.onSubmitHandler = this.onSubmitHandler.bind(this);
     }
 
-    onSubmitHandler(values: iSignUpState) {
+    private onSubmitHandler(values: iSignUpValues) {
         let { email, password, name } = values;
 
         console.log(this.props)
 
-        this.props.registerUserAction(email, password, name);
-    }
-
-    componentDidUpdate() {
-        console.log(this.props.isAuth, this.props.isFetching)
+        this.props.registerUserAction(email, name, password);
     }
 
     render() {

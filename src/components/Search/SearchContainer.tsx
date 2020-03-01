@@ -4,21 +4,30 @@ import './Search.sass';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { SearchByNameAction } from '../../redux/store-reducer';
-import { Avatar, Icon } from 'antd';
+import { Avatar, Icon, Button } from 'antd';
 import { NavLink } from 'react-router-dom';
+import { iState } from '../../redux/store';
+import { iUser, logOutAction } from '../../redux/user-reducer';
 
 interface SearchProps {
+    isAuth: boolean
+    user: iUser
+    token: string
+    logOutAction: (token: string) => Promise<void>
     SearchByNameAction: (name: string) => void
 }
 
-const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction }) => {
+const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction, token, logOutAction, isAuth, user: { name, email, purchases, balance } }) => {
     let [value, setValue] = useState<string>('');
-    let isAuth = false;
 
     const onChangeHandle = (ev: React.ChangeEvent<HTMLInputElement>) => {
         let v: string = ev.target.value;
 
         setValue(v);
+    }
+
+    const LogOutHandle = () => {
+        logOutAction(token);
     }
 
     const onSearchHandle = () => {
@@ -36,7 +45,17 @@ const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction }) => {
         
         {
             isAuth ?
-            <Avatar size="large" icon="user" className='user-avatar' />
+            <div>
+                <Avatar size="large" icon="user" className='user-avatar' />
+
+                <div>
+                    { name }
+                </div>
+
+                <Button type={'link'} onClick={LogOutHandle} >
+                    Log Out
+                </Button>
+            </div>
             :
             <div className='auth-nav'> 
                 <NavLink to='/signUp'>Sign up <Icon type="user-add" /></NavLink>
@@ -47,8 +66,14 @@ const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction }) => {
     </div>
 }
 
+let mapStateToProps = (state: iState) => ({
+    user: state.user.user,
+    token: state.user.token,
+    isAuth: state.user.isAuth
+})
+
 let ComposedComponent = compose(
-    connect(null, {SearchByNameAction})
+    connect(mapStateToProps, {SearchByNameAction, logOutAction})
 )(SearchContainer);
 
 export default ComposedComponent;

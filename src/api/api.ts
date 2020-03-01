@@ -1,6 +1,6 @@
-import Axios from 'axios';
+import Axios, { AxiosInstance } from 'axios';
 
-const instance = Axios.create({
+const instance: AxiosInstance = Axios.create({
     baseURL: 'http://localhost:3033/'
 })
 
@@ -25,7 +25,7 @@ export const getProductSearchByName = async (name: string) => {
 export const getUserDataById = async (id: string | number) => {
     let res = await instance.get(`/api/user/${id}`);
 
-    return res.data;
+    return res.data.user;
 }
 
 export const signUp = async (email: string, name: string, password: string) => {

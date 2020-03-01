@@ -1,6 +1,6 @@
 import { ActionType } from './store';
 import { getUserDataById, signUp, login } from '../api/api';
-import { stopSubmit, SubmissionError } from 'redux-form';
+import { stopSubmit } from 'redux-form';
 
 const ADD_DATA = 'user/ADD_DATA', TOGGLE_FETCHING = 'user/TOGGLE_FETCHING', SET_TOKEN = 'SET_TOKEN', TOGGLE_AUTH = 'TOGGLE_AUTH';
 
@@ -10,10 +10,12 @@ type UserActionType =
     | ActionType<typeof SET_TOKEN, {token: string}>
     | ActionType<typeof TOGGLE_AUTH, {isAuth: boolean}>
 
-interface iUser {
+export interface iUser {
     name: string
     email: string
     userId: string | number
+    balance: string | number
+    purchases: string | number
 }
 
 export interface iUserState {
@@ -27,7 +29,9 @@ let intialState: iUserState = {
     user: {
         name: '',
         email: '',
-        userId: ''
+        userId: '',
+        balance: '',
+        purchases: ''
     },
     token: '',
     isAuth: false,
@@ -70,40 +74,45 @@ const toggleIsAuth = (isAuth: boolean): UserActionType => ({ type: TOGGLE_AUTH, 
 const setTokenAction = (token: string): UserActionType => ({ type: SET_TOKEN, token });
 
 export const getUserDataAction = (token: string, userId: string | number) => async (dispatch: any) => {
-    dispatch(toggleIsFetching(false));
-    dispatch(toggleIsFetching(true));    
-
     if(token && userId) {
-        dispatch(localStorage.setItem('storeMe&', JSON.stringify({ userId, token })));
+        localStorage.setItem('storeMe&', JSON.stringify({ userId, token }));
+
         dispatch(setTokenAction(token));
-    
-        let res: iUser = await getUserDataById(userId);
         
-        dispatch(toggleIsFetching(false));
+        let res: iUser = await getUserDataById(userId);
+
+        console.log(res)
+        
+        dispatch(toggleIsAuth(true));
         dispatch(setUserDataAction(res));
     }
-
-    // dispatch(toggleIsAuth(false));
-    dispatch(toggleIsFetching(false));
+    else {
+        dispatch(toggleIsAuth(false));
+    }
 }
 
 export const loginUserAction = (email: string, password: string) => async (dispatch: any) => {
     dispatch(toggleIsFetching(false));
     dispatch(toggleIsFetching(true));
 
-    if(!!email && !!password) {
-        dispatch(stopSubmit('signUp', {email: 'Enter your email'})); // Good idea to me
-        dispatch(stopSubmit('signUp', {email: 'Enter your password'})); // Good idea to me
+    if(!email && !password) {
+        dispatch(stopSubmit('login', {email: 'Enter your email'})); // Good idea to me
+        dispatch(stopSubmit('login', {password: 'Enter your password'})); // Good idea to me
     }
     
     let res = await login(email, password);
 
     if(res.error) {
-        console.log(res.message)
+        let errorType: string = res.message.toLowerCase().split(' ')[0];
+        
+        dispatch(stopSubmit('login', {[errorType]: res.message}));
+        dispatch(toggleIsFetching(false));
     }
     else {
         console.log(res)
+        const { token, userId } = res;
 
+        dispatch(getUserDataAction( token, userId ));
         dispatch(toggleIsAuth(true));
         dispatch(toggleIsFetching(false));   
     }
@@ -121,6 +130,16 @@ export const registerUserAction = (email: string, name: string, password: string
     }
     else {
         dispatch(toggleIsFetching(false));
+    }
+}
+
+export const logOutAction = (token: string) => async (dispatch: any) => {
+    if(localStorage.getItem('storeMe&')?.length) {
+        console.log(token)
+
+        localStorage.removeItem('storeMe&');
+
+        dispatch(toggleIsAuth(false));
     }
 }
 
