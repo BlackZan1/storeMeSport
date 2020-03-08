@@ -1,24 +1,32 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Affix, Tabs } from 'antd';
 import { iDataItem, iState } from '../../redux/store';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import './Cart.sass';
+import { updateCartDataAction } from '../../redux/cart-reducer';
 
 interface CartContainerProps {
-    cart: iDataItem[]
+    products: iDataItem[]
+    waitingList: iDataItem[]
     totalSum: number
+    token: string
+    updateCartDataAction: (products: iDataItem[], waitingList: iDataItem[], token: string) => Promise<void>
 }
 
-const CartContainer:React.FC<CartContainerProps> = ({cart, totalSum}) => {
+const CartContainer:React.FC<CartContainerProps> = ({products, waitingList, token, totalSum, updateCartDataAction}) => {
+    useEffect(() => {
+        updateCartDataAction(products, waitingList, token);
+    }, [updateCartDataAction, products, waitingList, token])
+
     return (
         <Affix offsetTop={30}>
                 <React.Fragment>
                     {
-                        cart.length ? 
+                        products.length ? 
                         <Tabs defaultActiveKey="1" tabPosition={'right'} style={{minHeight: '150px', maxHeight: '300px', fontSize: 20}}>
                             {   
-                                cart.map((p: iDataItem, index: number) => {
+                                products.map((p: iDataItem, index: number) => {
                                     let shortName: string = '';
 
                                     if(p.name.length) {
@@ -56,12 +64,14 @@ const CartContainer:React.FC<CartContainerProps> = ({cart, totalSum}) => {
 }
 
 let mapStateToProps = (state: iState) => ({
-    cart: state.dataCart.data,
+    products: state.dataCart.data.products,
+    waitingList: state.dataCart.data.waitingList,
+    token: state.user.token,
     totalSum: state.dataCart.totalSum
 })
 
 const ComposedComponent: any = compose(
-    connect(mapStateToProps, null)
+    connect(mapStateToProps, { updateCartDataAction })
 )(CartContainer);
 
 export default ComposedComponent;

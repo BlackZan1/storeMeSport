@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 
 interface ProductProps {
     product: iDataItem
-    setOneItemToData: (item: iDataItem) => void
+    setOneItemToProducts: (item: iDataItem) => void
 }
 
 interface ProductCategorySectionProps {
@@ -25,7 +25,7 @@ const ProductCategorySection: React.FC<ProductCategorySectionProps> = ({title, s
     </div>
 )
 
-const Product: React.FC<ProductProps> = ({ product: {name, productImagePath, price, ...props}, setOneItemToData }) => {
+const Product: React.FC<ProductProps> = ({ product: {name, productImagePath, price, ...props}, setOneItemToProducts }) => {
     let bg: string[] = ['bg-1', 'bg-2', 'bg-3'];
 
     let [modalMode, setModalMode] = useState<boolean>(false);
@@ -49,7 +49,7 @@ const Product: React.FC<ProductProps> = ({ product: {name, productImagePath, pri
 
     const addItemToCart = () => {
         setDrawerMode(true);
-        setOneItemToData({name, productImagePath, price, ...props});
+        setOneItemToProducts({name, productImagePath, price, ...props});
         setAddedMode(true);
     }
 

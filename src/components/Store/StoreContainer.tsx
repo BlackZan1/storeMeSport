@@ -54,7 +54,7 @@ const StoreContainer: React.FC<StoreConnectorProps> = ({ data, cart, isFetching,
 
 let mapStateToProps = (state: iState) => ({
     data: state.store.data,
-    cart: state.dataCart.data,
+    cart: state.dataCart.data.products,
     isFetching: state.store.isFetching
 })
 

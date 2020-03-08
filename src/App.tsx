@@ -6,17 +6,18 @@ import { Layout } from 'antd';
 import useRoutes from './assets/Routes';
 import { connect } from 'react-redux';
 import { getUserDataAction } from './redux/user-reducer';
+import { getCartDataAction } from './redux/cart-reducer';
 
 interface AppProps {
-  getUserDataAction: (token: string, userId: string | number) => Promise<void>
+  getUserDataAction: (token: string) => Promise<void>
+  getCartDataAction: (token: string) => Promise<void>
 }
 
 interface iStorageItem {
-  userId: string
   token: string
 }
 
-const App: React.FC<AppProps> = ({ getUserDataAction }) => {
+const App: React.FC<AppProps> = ({ getUserDataAction, getCartDataAction }) => {
   const routes = useRoutes();
 
   useEffect(() => {
@@ -24,9 +25,10 @@ const App: React.FC<AppProps> = ({ getUserDataAction }) => {
       let item: string | null = localStorage.getItem('storeMe&');
       let lcitem: iStorageItem = JSON.parse(item || '');
 
-      getUserDataAction(lcitem.token, lcitem.userId);
+      getUserDataAction(lcitem.token);
+      getCartDataAction(lcitem.token);
     }
-  }, [ getUserDataAction ])
+  }, [ getUserDataAction, getCartDataAction ])
 
   return (
     <Layout>
@@ -39,4 +41,4 @@ const App: React.FC<AppProps> = ({ getUserDataAction }) => {
   );
 }
 
-export default connect(null, { getUserDataAction })(App);
+export default connect(null, { getUserDataAction, getCartDataAction })(App);

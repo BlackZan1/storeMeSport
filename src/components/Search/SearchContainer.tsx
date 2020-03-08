@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Search from 'antd/lib/input/Search';
-import './Search.sass';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { SearchByNameAction } from '../../redux/store-reducer';
@@ -8,16 +7,18 @@ import { Avatar, Icon, Button } from 'antd';
 import { NavLink } from 'react-router-dom';
 import { iState } from '../../redux/store';
 import { iUser, logOutAction } from '../../redux/user-reducer';
+import './Search.sass';
 
 interface SearchProps {
     isAuth: boolean
     user: iUser
     token: string
+    isFetching: boolean
     logOutAction: (token: string) => Promise<void>
     SearchByNameAction: (name: string) => void
 }
 
-const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction, token, logOutAction, isAuth, user: { name, email, purchases, balance } }) => {
+const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction, isFetching, token, logOutAction, isAuth, user: { name, email, purchases, balance } }) => {
     let [value, setValue] = useState<string>('');
 
     const onChangeHandle = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,14 +46,20 @@ const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction, token, log
         
         {
             isAuth ?
-            <div>
-                <Avatar size="large" icon="user" className='user-avatar' />
+            <div className='user-block'>
+                {
+                    isFetching ? <Icon spin={true} style={{marginLeft: 20}} type="loading" />
+                    :
+                    <NavLink to={'/myPage'}>
+                        <Avatar size="large" icon="user" className='user-avatar' />
 
-                <div>
-                    { name }
-                </div>
+                        <p className='user-name'>
+                            { name.split(' ')[0] }
+                        </p>
+                    </NavLink>
+                }
 
-                <Button type={'link'} onClick={LogOutHandle} >
+                <Button className='user-btn' size={'large'} type={'default'} onClick={LogOutHandle} >
                     Log Out
                 </Button>
             </div>
@@ -69,7 +76,8 @@ const SearchContainer: React.FC<SearchProps> = ({ SearchByNameAction, token, log
 let mapStateToProps = (state: iState) => ({
     user: state.user.user,
     token: state.user.token,
-    isAuth: state.user.isAuth
+    isAuth: state.user.isAuth,
+    isFetching: state.user.isFetching
 })
 
 let ComposedComponent = compose(

@@ -44,6 +44,8 @@ const toggleIsFetching = (data: boolean): StoreActionType => ({type: TOGGLE_FETC
 export const LoadDataAction = () => async (dispatch: any) => {
     dispatch(toggleIsFetching(true));
 
+    debugger;
+
     let res: iDataItem[] = await getProducts();
 
     dispatch(setStoreDataAction(res));

@@ -6,8 +6,8 @@ import SignUp from './SignUp';
 import { connect } from 'react-redux';
 
 interface SignUpContainerProps {
-    isAuth: boolean
     isFetching: boolean
+    isAuth: boolean
     registerUserAction: (email: string, name: string, password: string) => Promise<void>
 }
 
@@ -17,11 +17,18 @@ interface iSignUpValues {
     name: string
 }
 
-class SignUpContainer extends React.Component<SignUpContainerProps> {
+interface iSignUpState {
+    isSuccess: boolean
+}
+
+class SignUpContainer extends React.Component<SignUpContainerProps, iSignUpState> {
     constructor(props: SignUpContainerProps) {
         super(props)
 
         this.onSubmitHandler = this.onSubmitHandler.bind(this);
+        this.state = {
+            isSuccess: false
+        }
     }
 
     private onSubmitHandler(values: iSignUpValues) {
@@ -30,13 +37,17 @@ class SignUpContainer extends React.Component<SignUpContainerProps> {
         console.log(this.props)
 
         this.props.registerUserAction(email, name, password);
+        this.setState({
+            isSuccess: true
+        })
     }
 
     render() {
-        const { isAuth, isFetching } = this.props;
+        const { isFetching, isAuth } = this.props;
+        const { isSuccess } = this.state;
 
         return (
-            isAuth ? 
+            isSuccess || isAuth ? 
             <Redirect to='/login' />
             :
             <SignUp isFetching={isFetching} onSubmit={this.onSubmitHandler} />

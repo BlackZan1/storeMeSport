@@ -1,5 +1,5 @@
 import { ActionType } from './store';
-import { getUserDataById, signUp, login } from '../api/api';
+import { getUserData, signUp, login } from '../api/api';
 import { stopSubmit } from 'redux-form';
 
 const ADD_DATA = 'user/ADD_DATA', TOGGLE_FETCHING = 'user/TOGGLE_FETCHING', SET_TOKEN = 'SET_TOKEN', TOGGLE_AUTH = 'TOGGLE_AUTH';
@@ -13,7 +13,7 @@ type UserActionType =
 export interface iUser {
     name: string
     email: string
-    userId: string | number
+    userId?: string | number
     balance: string | number
     purchases: string | number
 }
@@ -73,18 +73,22 @@ const toggleIsFetching = (data: boolean): UserActionType => ({ type: TOGGLE_FETC
 const toggleIsAuth = (isAuth: boolean): UserActionType => ({ type: TOGGLE_AUTH, isAuth });
 const setTokenAction = (token: string): UserActionType => ({ type: SET_TOKEN, token });
 
-export const getUserDataAction = (token: string, userId: string | number) => async (dispatch: any) => {
-    if(token && userId) {
-        localStorage.setItem('storeMe&', JSON.stringify({ userId, token }));
+export const getUserDataAction = (token: string) => async (dispatch: any) => {
+    if(token) {
+        localStorage.setItem('storeMe&', JSON.stringify({ token }));
 
         dispatch(setTokenAction(token));
-        
-        let res: iUser = await getUserDataById(userId);
 
-        console.log(res)
+        let res: iUser | any = await getUserData(token);
+
+        if(res.error) {
+            console.log(res.message)
+
+            return localStorage.removeItem('storeMe&')
+        }
         
         dispatch(toggleIsAuth(true));
-        dispatch(setUserDataAction(res));
+        dispatch(setUserDataAction(res.user));
     }
     else {
         dispatch(toggleIsAuth(false));
@@ -110,9 +114,9 @@ export const loginUserAction = (email: string, password: string) => async (dispa
     }
     else {
         console.log(res)
-        const { token, userId } = res;
+        const { token } = res;
 
-        dispatch(getUserDataAction( token, userId ));
+        dispatch(getUserDataAction( token ));
         dispatch(toggleIsAuth(true));
         dispatch(toggleIsFetching(false));   
     }
@@ -140,6 +144,14 @@ export const logOutAction = (token: string) => async (dispatch: any) => {
         localStorage.removeItem('storeMe&');
 
         dispatch(toggleIsAuth(false));
+        dispatch(setTokenAction(''));
+        dispatch(setUserDataAction({
+            name: '',
+            email: '',
+            userId: '',
+            balance: '',
+            purchases: ''
+        }));
     }
 }
 

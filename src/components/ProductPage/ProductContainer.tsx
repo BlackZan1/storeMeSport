@@ -6,17 +6,17 @@ import { iDataItem, iState } from '../../redux/store';
 import { getProductDataAction } from '../../redux/product-reducer';
 import Product from './Product';
 import { BigLoader } from '../../assets/Loader';
-import { setOneItemToData } from '../../redux/cart-reducer';
+import { setOneItemToProducts } from '../../redux/cart-reducer';
 
 interface ProductContainerProps {
     product: iDataItem
     isFetching: boolean
     match: any,
     getProductDataAction: (id: number | string) => void
-    setOneItemToData: (item: iDataItem) => void
+    setOneItemToProducts: (item: iDataItem) => void
 }
 
-const ProductContainer: React.FC<ProductContainerProps> = ({match, product, isFetching, getProductDataAction, setOneItemToData}) => {
+const ProductContainer: React.FC<ProductContainerProps> = ({match, product, isFetching, getProductDataAction, setOneItemToProducts}) => {
     useEffect(() => {
         getProductDataAction(match.params.id);
     }, [getProductDataAction, match.params.id])
@@ -27,7 +27,7 @@ const ProductContainer: React.FC<ProductContainerProps> = ({match, product, isFe
                 isFetching ? 
                 <BigLoader />
                 :
-                <Product product={product} setOneItemToData={setOneItemToData} />
+                <Product product={product} setOneItemToProducts={setOneItemToProducts} />
             }
         </>
     )
@@ -40,7 +40,7 @@ let mapStateToProps = (state: iState) => ({
 
 let ComposedComponent: any = compose(
     withRouter,
-    connect(mapStateToProps, {getProductDataAction, setOneItemToData})
+    connect(mapStateToProps, {getProductDataAction, setOneItemToProducts})
 )(ProductContainer);
 
 export default ComposedComponent;
